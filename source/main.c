@@ -6,10 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 #if NXLINK_LOG
 #include <unistd.h>
 #endif
 
+// prints to the screen and displays it immediately
+__attribute__((format (printf, 1, 2)))
+static void consolePrint(const char* f, ...) {
+    va_list argv;
+    va_start(argv, f);
+    vprintf(f, argv);
+    va_end(argv);
+    consoleUpdate(NULL);
+}
 
 // called before main
 void userAppInit(void) {
@@ -39,9 +49,7 @@ int main(int argc, char** argv) {
     padConfigureInput(1, HidNpadStyleSet_NpadStandard);
     padInitializeDefault(&pad);
 
-    printf("Press (+) to exit\n\n");
-
-    consoleUpdate(NULL);
+    consolePrint("Press (+) to exit\n\n");
 
     // loop until + button is pressed
     while (appletMainLoop()) {
